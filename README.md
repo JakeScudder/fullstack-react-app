@@ -1,3 +1,7 @@
+The final project in the Techdegree.
+
+Creating a React front end to use the REST api I built in project 9.
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
