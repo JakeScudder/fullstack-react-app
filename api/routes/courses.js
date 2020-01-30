@@ -66,9 +66,10 @@ router.get('/courses/:id', async (req, res) => {
     include: {
       model: User,
       attributes: {exclude: ['password','createdAt', 'updatedAt'] 
-    },
-  }
+      },
+    }
   });
+  console.log(course);
   res.status(200).json(course);
 });
 

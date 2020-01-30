@@ -23,11 +23,11 @@ class App extends Component {
     this.handleFetch();
   }
 
-  handleFetch = () => {
+  handleFetch = (query = "") => {
     this.setState({
       loading: true
     })
-    axios.get(`http://localhost:5000/api/courses`)
+    axios.get(`http://localhost:5000/api/courses/${query}`)
       .then(res => {
         this.setState({
           courses: res.data.courses,
@@ -40,9 +40,6 @@ class App extends Component {
   }
 
   render() {
-    if (!this.state.loading) {
-      console.log(this.state.courses);
-    }
     return (
       <HashRouter>
         <div>
@@ -52,12 +49,12 @@ class App extends Component {
         }
         <Switch>
           <Route 
-            exact path="/"
+            exact path="/api/courses"
             render={(props) => <Courses {...props} data={this.state.courses} /> }
           />
           <Route 
-            exact path="/courses/:id"
-            render={(props) => <CourseDetail {...props} data={this.state.courses} /> }
+            exact path="/api/courses/:id"
+            render={(props) => <CourseDetail {...props} fetchCourse={this.handleFetch} data={this.state.courses} /> }
           />
         </Switch>
         </div>

@@ -7,21 +7,24 @@ class CourseDetail extends Component {
       loading: true,
     } 
   }
+
+  
   render() {
+    console.log(this.props.data)
     return(
-      <div class="actions--bar">
-          <div class="bounds">
-            <div class="grid-100"><span><a class="button" href="update-course.html">Update Course</a><a class="button" href="#">Delete Course</a></span><a
-                class="button button-secondary" href="index.html">Return to List</a></div>
+      <div className="actions--bar">
+          <div className="bounds">
+            <div className="grid-100"><span><a className="button" href="/update-course.html">Update Course</a><a className="button" href="#/to-be-deleted">Delete Course</a></span><a
+                className="button button-secondary" href="#/api/courses">Return to List</a></div>
           </div>
-        <div class="bounds course--detail">
-          <div class="grid-66">
-            <div class="course--header">
-              <h4 class="course--label">Course</h4>
-              <h3 class="course--title">Build a Basic Bookcase</h3>
+        <div className="bounds course--detail">
+          <div className="grid-66">
+            <div className="course--header">
+              <h4 className="course--label">Course</h4>
+              <h3 className="course--title">Build a Basic Bookcase</h3>
               <p>By Joe Smith</p>
             </div>
-            <div class="course--description">
+            <div className="course--description">
 
             </div>
           </div>
