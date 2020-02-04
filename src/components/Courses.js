@@ -10,25 +10,19 @@ class Courses extends Component {
   }
 
   handleClick = e => {
-    debugger
-    console.log(e.target)
-    console.log(e.target.course)
-    
-    // let courseID = e.target.courseid
-    // console.log(courseID)
-    // this.props.fetchCourse(courseID)
+    let courseID = e.target.dataset.course
+    this.props.fetchCourse(courseID)
   }
 
   render() {
-    console.log(this.props.data);
     return (
     <div className="bounds">
     { this.props.data.map(course => {
-      let url = `#/api/courses/${course.id}`
+      let url = `#/courses/${course.id}`
         return (
-          <div onClick={this.handleClick} key={course.id}  className="grid-33"><a course={course.id} className="course--module course--link" href={url}>
-            <h4 course={course.id} className="course--label"> Course </h4>
-            <h3 course={course.id} className="course--title"> {course.title}</h3>
+          <div onClick={this.handleClick} key={course.id}  className="grid-33"><a data-course={course.id} className="course--module course--link" href={url}>
+            <h4 data-course={course.id} className="course--label"> Course </h4>
+            <h3 data-course={course.id} className="course--title"> {course.title}</h3>
             </a></div>
         ) 
       })
