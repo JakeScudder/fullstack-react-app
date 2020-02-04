@@ -15,14 +15,19 @@ class CourseDetail extends Component {
     let lastName;
     let instructor;
     let list;
+    let courseUpdateUrl = `#/courses/${course.id}/update`
 
     const formatMaterials = () => {
-      let materialsFormat = course.materialsNeeded.replace(/\*/, "")
-      materialsFormat = materialsFormat.split(/\*/g);
-      list = materialsFormat.map((item, index) => 
-        <li key={index}>{item}</li>
-      )
-      console.log(list);
+      if (course.materialsNeeded) {
+        let materialsFormat = course.materialsNeeded.replace(/\*/, "")
+        materialsFormat = materialsFormat.split(/\*/g);
+        list = materialsFormat.map((item, index) => 
+          <li key={index}>{item}</li>
+        )
+        console.log(list);
+        return list;
+      }
+      list = <li>Not Specified</li>;
       return list;
     }
     //Why is there a delay between accessing the nested object?
@@ -36,10 +41,11 @@ class CourseDetail extends Component {
       instructor = firstName.concat(lastName);
       formatMaterials();
     }
+
     return(
       <div className="actions--bar">
           <div className="bounds">
-            <div className="grid-100"><span><a className="button" href="/update-course">Update Course</a><a className="button" href="#/to-be-deleted">Delete Course</a></span><a
+            <div className="grid-100"><span><a className="button" href={courseUpdateUrl}>Update Course</a><a className="button" href="#/to-be-deleted">Delete Course</a></span><a
                 className="button button-secondary" href="#/courses">Return to List</a></div>
           </div>
         <div className="bounds course--detail">

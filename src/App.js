@@ -7,6 +7,7 @@ import {
 } from 'react-router-dom';
 
 //Components
+import Header from './components/Header';
 import Courses from './components/Courses';
 import CourseDetail from './components/CourseDetail';
 import UserSignIn from './components/UserSignIn';
@@ -58,39 +59,40 @@ class App extends Component {
   render() {
     return (
       <HashRouter>
-        <div>
-        { (this.state.loading) 
-          ?  <p className="loading" >Loading...</p>
-          :  null
-        }
-        <Switch>
-          <Route 
-            exact path="/courses"
-            render={(props) => <Courses fetchCourse={this.handleFetch} {...props} data={this.state.courses} /> }
-          />
-          <Route 
-            exact path="/courses/create"
-            render={(props) => <CreateCourse {...props} /> }
-          />
-          
-          <Route 
-            exact path="/signin"
-            render={(props) => <UserSignIn {...props} /> }
-          />
-          <Route 
-            exact path="/signup"
-            render={(props) => <UserSignUp {...props} /> }
-          />
-          <Route 
-            exact path="/courses/:id"
-            render={(props) => <CourseDetail {...props}  data={this.state.course} /> }
-          />
-          <Route 
-            exact path="/courses/:id/update"
-            render={(props) => <UpdateCourse {...props} /> }
-          />
-        </Switch>
-        </div>
+        <Header />
+          <div>
+          { (this.state.loading) 
+            ?  <p className="loading" >Loading...</p>
+            :  null
+          }
+            <Switch>
+              <Route 
+                exact path="/courses"
+                render={(props) => <Courses fetchCourse={this.handleFetch} {...props} data={this.state.courses} /> }
+              />
+              <Route 
+                exact path="/courses/create"
+                render={(props) => <CreateCourse {...props} /> }
+              />
+              
+              <Route 
+                exact path="/signin"
+                render={(props) => <UserSignIn {...props} /> }
+              />
+              <Route 
+                exact path="/signup"
+                render={(props) => <UserSignUp {...props} /> }
+              />
+              <Route 
+                exact path="/courses/:id"
+                render={(props) => <CourseDetail {...props}  data={this.state.course} /> }
+              />
+              <Route 
+                exact path="/courses/:id/update"
+                render={(props) => <UpdateCourse {...props} data={this.state.course}/> }
+              />
+            </Switch>
+          </div>
       </HashRouter>  
     )
   }
