@@ -8,8 +8,6 @@ class Courses extends Component {
     } 
   }
 
-  
-
   handleClick = e => {
     let courseID = e.target.dataset.course
     this.props.fetchCourse(courseID)
