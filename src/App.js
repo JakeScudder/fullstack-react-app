@@ -3,7 +3,7 @@ import axios from 'axios';
 import {
   HashRouter,
   Route,
-  Switch
+  Switch, 
 } from 'react-router-dom';
 
 //Components
@@ -12,6 +12,7 @@ import Courses from './components/Courses';
 import CourseDetail from './components/CourseDetail';
 import UserSignIn from './components/UserSignIn';
 import UserSignUp from './components/UserSignUp';
+import UserSignOut from './components/UserSignOut';
 import CreateCourse from './components/CreateCourse';
 import UpdateCourse from './components/UpdateCourse';
 
@@ -21,6 +22,7 @@ class App extends Component {
   constructor() {
   super();
     this.state = {
+      authenticatedUser: "",
       course: [],
       courses: [],
       loading: true
@@ -29,6 +31,12 @@ class App extends Component {
 
   componentDidMount() {
     this.handleFetch();
+  }
+
+  handleAuthUser = (user) => {
+    this.setState({
+      authenticatedUser: user
+    })
   }
 
   handleFetch = (query = "") => {
@@ -56,10 +64,14 @@ class App extends Component {
     })
   }
 
+  signOut = () => {
+    this.setState({ authenticatedUser: null });
+  }
+
   render() {
     return (
       <HashRouter>
-        <Header />
+        <Header user={this.state.authenticatedUser}/>
           <div>
           { (this.state.loading) 
             ?  <p className="loading" >Loading...</p>
@@ -77,11 +89,11 @@ class App extends Component {
               
               <Route 
                 exact path="/signin"
-                render={(props) => <UserSignIn {...props} /> }
+                render={(props) => <UserSignIn updateState={this.handleAuthUser} {...props} /> }
               />
               <Route 
                 exact path="/signup"
-                render={(props) => <UserSignUp {...props} /> }
+                render={(props) => <UserSignUp {...props} updateState={this.handleAuthUser}/> }
               />
               <Route 
                 exact path="/courses/:id"
@@ -90,6 +102,8 @@ class App extends Component {
               <Route 
                 exact path="/courses/:id/update"
                 render={(props) => <UpdateCourse {...props} data={this.state.course}/> }
+              />
+              <Route path="/signout" render={(props) => <UserSignOut {...props} logOut={this.signOut} />}
               />
             </Switch>
           </div>
