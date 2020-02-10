@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+// import { Redirect } from 'react-router-dom';
+
 class UserSignIn extends Component {
 
   constructor() {
@@ -65,7 +67,7 @@ class UserSignIn extends Component {
       return response.json().then(data => {
         console.log(data);
         this.handleAuth(data);
-        return;
+        return window.location.href = "#/courses";
       });
     }
     else if (response.status === 401) {

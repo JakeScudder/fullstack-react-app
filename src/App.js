@@ -3,8 +3,12 @@ import axios from 'axios';
 import {
   HashRouter,
   Route,
-  Switch, 
+  Switch,
+  Redirect, 
 } from 'react-router-dom';
+
+//Auth Route
+import PrivateRoute from './PrivateRoute';
 
 //Components
 import Header from './components/Header';
@@ -40,14 +44,13 @@ class App extends Component {
   }
 
   handleFetch = (query = "") => {
-    console.log(query);
     this.setState({
       loading: true
     })
     axios.get(`http://localhost:5000/api/courses/${query}`)
       .then(res => {
         if (query > 0) {
-          console.log("query exists")
+          // console.log("query exists")
           this.setState({
             course: res.data,
             loading: false
@@ -78,11 +81,13 @@ class App extends Component {
             :  null
           }
             <Switch>
+              <Redirect exact from="/" to="/courses"/>
               <Route 
                 exact path="/courses"
                 render={(props) => <Courses fetchCourse={this.handleFetch} {...props} data={this.state.courses} /> }
               />
-              <Route 
+              <PrivateRoute 
+                authenticated={this.state.authenticatedUser}
                 exact path="/courses/create"
                 render={(props) => <CreateCourse {...props} /> }
               />
@@ -99,8 +104,9 @@ class App extends Component {
                 exact path="/courses/:id"
                 render={(props) => <CourseDetail {...props}  data={this.state.course} /> }
               />
-              <Route 
+              <PrivateRoute 
                 exact path="/courses/:id/update"
+                authenticated={this.state.authenticatedUser}
                 render={(props) => <UpdateCourse {...props} data={this.state.course}/> }
               />
               <Route path="/signout" render={(props) => <UserSignOut {...props} logOut={this.signOut} />}
