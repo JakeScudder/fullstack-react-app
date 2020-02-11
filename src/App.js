@@ -27,6 +27,7 @@ class App extends Component {
   super();
     this.state = {
       authenticatedUser: "",
+      isAuthenticated: null,
       course: [],
       courses: [],
       loading: true
@@ -39,7 +40,8 @@ class App extends Component {
 
   handleAuthUser = (user) => {
     this.setState({
-      authenticatedUser: user
+      authenticatedUser: user,
+      isAuthenticated: true
     })
   }
 
@@ -68,7 +70,7 @@ class App extends Component {
   }
 
   signOut = () => {
-    this.setState({ authenticatedUser: null });
+    this.setState({ authenticatedUser: null, isAuthenticated: null });
   }
 
   render() {
@@ -87,9 +89,9 @@ class App extends Component {
                 render={(props) => <Courses fetchCourse={this.handleFetch} {...props} data={this.state.courses} /> }
               />
               <PrivateRoute 
-                authenticated={this.state.authenticatedUser}
+                authenticated={this.state.isAuthenticated}
                 exact path="/courses/create"
-                render={(props) => <CreateCourse {...props} /> }
+                component={(props) => <CreateCourse {...props} /> }
               />
               
               <Route 
@@ -106,8 +108,8 @@ class App extends Component {
               />
               <PrivateRoute 
                 exact path="/courses/:id/update"
-                authenticated={this.state.authenticatedUser}
-                render={(props) => <UpdateCourse {...props} data={this.state.course}/> }
+                authenticated={this.state.isAuthenticated}
+                component={(props) => <UpdateCourse {...props} authenticated={this.state.isAuthenticated} data={this.state.course}/> }
               />
               <Route path="/signout" render={(props) => <UserSignOut {...props} logOut={this.signOut} />}
               />
