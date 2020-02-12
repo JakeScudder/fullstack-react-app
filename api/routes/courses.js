@@ -117,6 +117,8 @@ router.put('/courses/:id', [
   //Update Course
   try {
     let course = await Course.findByPk(req.params.id);
+    // console.log("course:", course);
+    // console.log("req.params.id:", req.params.id);
     if (course) {
       if (user.id === course.userId) {
         course.title = req.body.title;

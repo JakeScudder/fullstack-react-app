@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import {
-  HashRouter,
+  BrowserRouter,
   Route,
   Switch,
   Redirect,
@@ -27,9 +27,9 @@ class App extends Component {
   constructor() {
   super();
     this.state = {
-      authenticatedUser: Cookies.getJSON('authenticatedUser') || null,
+      authUser: Cookies.getJSON('authUser') || null,
       name: Cookies.getJSON('name') || null,
-      isAuthenticated: Cookies.getJSON('isAuthenticated') || null,
+      isAuth: Cookies.getJSON('isAuth') || null,
       course: [],
       courses: [],
       loading: true
@@ -37,59 +37,75 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.handleFetch();
+    this.handleFetchCourses();
   }
 
+  //Authorize User
   handleAuthUser = (email, password, data) => {
     let object = {email, password};
     this.setState({
-      authenticatedUser: object,
-      isAuthenticated: true,
+      authUser: object,
+      isAuth: true,
       name: data,
     })
-    console.log(this.state.authenticatedUser);
-    Cookies.set('authenticatedUser', JSON.stringify(object), {expires: 1});
-    Cookies.set('isAuthenticated' === true, {expires: 1});
+    console.log(this.state.authUser);
+    Cookies.set('authUser', JSON.stringify(object), {expires: 1});
+    Cookies.set('isAuth', true, {expires: 1});
     Cookies.set('name', JSON.stringify(data), {expires: 1})
   }
 
-  handleFetch = (query = "") => {
+  //Fetch all Courses
+  handleFetchCourses = () => {
     this.setState({
       loading: true
     })
-    axios.get(`http://localhost:5000/api/courses/${query}`)
+    axios.get(`http://localhost:5000/api/courses/`)
       .then(res => {
-        if (query > 0) {
-          // console.log("query exists")
-          this.setState({
-            course: res.data,
-            loading: false
-          }) 
-        } else {
           this.setState({
             courses: res.data.courses,
             loading: false
           }) 
         }
-      })
+      )
     .catch(error => {
       console.log('Error fetching and parsing data', error)
     })
   }
 
+  // Fetch individual Courses
+  handleFetchCourse = (query = "") => {
+    this.setState({
+      loading: true
+    })
+    axios.get(`http://localhost:5000/api/courses/${query}`)
+      .then(res => {
+          this.setState({
+            course: res.data,
+            loading: false
+          }) 
+        } 
+      )
+    .catch(error => {
+      console.log('Error fetching and parsing data', error)
+    })
+  }
+
+
   signOut = () => {
     this.setState({ 
-      authenticatedUser: null, 
-      isAuthenticated: null, 
+      authUser: null, 
+      isAuth: null, 
       name: "" 
     });
-    Cookies.remove();
+    Cookies.remove('authUser');
+    Cookies.remove('isAuth');
+    Cookies.remove('name');
     return <Redirect to="/" />;
   }
 
   render() {
     return (
-      <HashRouter>
+      <BrowserRouter>
         <Header user={this.state.name}/>
           <div>
           { (this.state.loading) 
@@ -99,12 +115,12 @@ class App extends Component {
             <Switch>
               <Route 
                 exact path="/"
-                render={(props) => <Courses fetchCourse={this.handleFetch} {...props} data={this.state.courses} /> }
+                render={(props) => <Courses fetchCourses={this.handleFetchCourses} fetchCourse={this.handleFetchCourse} {...props} data={this.state.courses} /> }
               />
               <PrivateRoute 
-                authenticated={this.state.isAuthenticated}
+                authenticated={this.state.isAuth}
                 exact path="/courses/create"
-                component={(props) => <CreateCourse {...props} /> }
+                component={(props) => <CreateCourse user={this.state.authUser} name={this.state.name}{...props} /> }
               />
               
               <Route 
@@ -121,14 +137,14 @@ class App extends Component {
               />
               <PrivateRoute 
                 path="/courses/:id/update"
-                authenticated={this.state.isAuthenticated}
-                component={(props) => <UpdateCourse {...props} user={this.state.authenticatedUser} data={this.state.course}/> }
+                authenticated={this.state.isAuth}
+                component={(props) => <UpdateCourse {...props} user={this.state.authUser} course={this.state.course}/> }
               />
               <Route path="/signout" render={(props) => <UserSignOut {...props} logOut={this.signOut} />}
               />
             </Switch>
           </div>
-      </HashRouter>  
+      </BrowserRouter>  
     )
   }
 }

@@ -50,6 +50,7 @@ const authenticateUser = async (req, res, next) => {
 router.get('/users', authenticateUser, async (req, res) => {
   const user = req.currentUser;
   res.status(200).json({
+    id: user.id,
     firstName: user.firstName,
     lastName: user.lastName,
     username: user.emailAddress,

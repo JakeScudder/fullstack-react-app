@@ -48,7 +48,7 @@ class CourseDetail extends Component {
     return(
       <div className="actions--bar">
           <div className="bounds">
-            <div className="grid-100"><span><Link className="button" exact to={courseUpdateUrl}>Update Course</Link><a className="button" href="#/to-be-deleted">Delete Course</a></span><a
+            <div className="grid-100"><span><Link className="button" to={courseUpdateUrl}>Update Course</Link><a className="button" href="/to-be-deleted">Delete Course</a></span><a
                 className="button button-secondary" href="/">Return to List</a></div>
           </div>
         <div className="bounds course--detail">

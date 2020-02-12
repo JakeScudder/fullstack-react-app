@@ -1,20 +1,20 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
 
 class UpdateCourse extends Component {
   constructor(props) {
     super(props);
       this.state = {
-        title: props.data.title,
-        description: props.data.description,
-        estimatedTime: props.data.estimatedTime,
-        materialsNeeded: props.materialsNeeded,
+        id: this.props.course.id,
+        title: this.props.course.title,
+        description: this.props.course.description,
+        estimatedTime: this.props.course.estimatedTime,
+        materialsNeeded: this.props.course.materialsNeeded,
       };
     }
 
   handleCancel = (event) => {
     event.preventDefault();
-    return <Redirect to="/courses"/>;
+    this.props.history.push('/');
   }
 
   //Helper function to handle state of inputs
@@ -44,7 +44,7 @@ class UpdateCourse extends Component {
       const encodedCredentials = btoa(`${credentials.email}:${credentials.password}`);
       options.headers['Authorization'] = `Basic ${encodedCredentials}`;
     }
-    return fetch("http://localhost:5000/api/courses/:id", options);
+    return fetch(path, options);
   }
 
   handleUpdate = async () => {
@@ -54,12 +54,16 @@ class UpdateCourse extends Component {
       estimatedTime,
       materialsNeeded,
     } = this.state;
+    
+    let email = this.props.user.email;
+    let password = this.props.user.password;
+    let courseId = this.state.id;
+    let url = `http://localhost:5000/api/courses/${courseId}`
+    console.log(url);
 
-    let user = this.props.user
-
-    const response = await this.apiFunction("http://localhost:5000/api/courses/:id", 'PUT', {title, description, estimatedTime, materialsNeeded}, true, { user });
+    const response = await this.apiFunction(url, 'PUT', {title, description, estimatedTime, materialsNeeded}, true, { email, password });
     if (response.status === 204) {
-      return <Redirect to="/" />
+      this.props.history.push('/');
     } else if (response.status === 401) {
       return null;
     }
@@ -74,7 +78,7 @@ class UpdateCourse extends Component {
   }
   
   render() {
-    let course = this.props.data
+    let course = this.props.course
     let firstName;
     let lastName;
     let instructor;
@@ -111,7 +115,7 @@ class UpdateCourse extends Component {
                   <li className="course--stats--list--item">
                     <h4>Estimated Time</h4>
                     <div><input id="estimatedTime" name="estimatedTime" type="text" className="course--time--input"
-                        placeholder="Hours" onChange={this.handleChange} value={this.state.time}/></div>
+                        placeholder="Hours" onChange={this.handleChange} value={this.state.estimatedTime}/></div>
                   </li>
                   <li className="course--stats--list--item">
                     <h4>Materials Needed</h4>

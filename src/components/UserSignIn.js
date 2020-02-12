@@ -5,8 +5,8 @@ import { Redirect } from 'react-router-dom';
 
 class UserSignIn extends Component {
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       email: "",
       password: "",
@@ -35,9 +35,8 @@ class UserSignIn extends Component {
   }
 
   handleCancel = (event) => {
-    return (
-    <Redirect to= "/"/>
-    )
+    event.preventDefault();
+    window.location.href = '/';
   }
 
   handleEmail = (e) => {
@@ -59,6 +58,7 @@ class UserSignIn extends Component {
   handleSubmit = async (event) => {
     event.preventDefault();
     this.handleSignIn();
+    this.props.history.push('/');
   }
 
 
@@ -68,8 +68,7 @@ class UserSignIn extends Component {
     const response = await this.apiFunction('http://localhost:5000/api/users', 'GET', null, true, {email, password});
     if (response.status === 200) {
       return response.json().then(data => {
-        this.handleName(data);
-        this.handleAuth(email, password);
+        this.handleAuth(email, password, data);
         return <Redirect to="/"/>;
       });
     }

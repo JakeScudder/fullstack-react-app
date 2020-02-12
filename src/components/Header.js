@@ -1,12 +1,10 @@
 import React from 'react';
-import {Link} from 'react-router-dom';
 
 const Header = (props) => {
   let first;
   let firstFormat;
   let last;
   let name;
-  console.log(props.user);
   if (props.user && props.user.firstName) {
     first = props.user.firstName;
     firstFormat = `${first} `;
@@ -18,8 +16,8 @@ const Header = (props) => {
     return(
     <div className="header">
       <div className="bounds">
-        <h1 className="header--logo">Courses</h1>
-        <nav><Link className="signout" to="/signout">Welcome {name}, Sign Out?</Link></nav>
+        <h1 className="header--logo"><a className="header--logo" href='/'>Courses</a></h1>
+        <nav><a className="signout" href="/signout">Welcome {name}, Sign Out?</a></nav>
       </div>
     </div>
     )  
