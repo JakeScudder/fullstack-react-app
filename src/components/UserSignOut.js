@@ -4,10 +4,8 @@ import { Redirect } from 'react-router-dom';
 const UserSignOut = (props) => {
   props.logOut();
   return (
-    <Redirect to="/courses" />
-  );
+    <Redirect to='/' />
+  )
 }
 
 export default UserSignOut;
-
-

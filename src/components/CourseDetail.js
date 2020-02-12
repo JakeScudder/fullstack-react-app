@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 
 class CourseDetail extends Component {
   constructor (props) {
@@ -15,7 +16,7 @@ class CourseDetail extends Component {
     let lastName;
     let instructor;
     let list;
-    let courseUpdateUrl = `#/courses/${course.id}/update`
+    let courseUpdateUrl = `/courses/${course.id}/update`
 
     const formatMaterials = () => {
       if (course.materialsNeeded) {
@@ -42,11 +43,13 @@ class CourseDetail extends Component {
       formatMaterials();
     }
 
+    console.log(courseUpdateUrl);
+
     return(
       <div className="actions--bar">
           <div className="bounds">
-            <div className="grid-100"><span><a className="button" href={courseUpdateUrl}>Update Course</a><a className="button" href="#/to-be-deleted">Delete Course</a></span><a
-                className="button button-secondary" href="#/courses">Return to List</a></div>
+            <div className="grid-100"><span><Link className="button" exact to={courseUpdateUrl}>Update Course</Link><a className="button" href="#/to-be-deleted">Delete Course</a></span><a
+                className="button button-secondary" href="/">Return to List</a></div>
           </div>
         <div className="bounds course--detail">
           <div className="grid-66">

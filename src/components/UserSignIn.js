@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
 
 // import { Redirect } from 'react-router-dom';
 
@@ -34,8 +35,9 @@ class UserSignIn extends Component {
   }
 
   handleCancel = (event) => {
-    event.preventDefault();
-    window.location.href = "#/courses";
+    return (
+    <Redirect to= "/"/>
+    )
   }
 
   handleEmail = (e) => {
@@ -50,8 +52,8 @@ class UserSignIn extends Component {
     }) 
   }
 
-  handleAuth = (data) => {
-    this.props.updateState(data);
+  handleAuth = (email, password, data) => {
+    this.props.updateState(email, password, data);
   }
 
   handleSubmit = async (event) => {
@@ -59,15 +61,16 @@ class UserSignIn extends Component {
     this.handleSignIn();
   }
 
+
   handleSignIn = async () => {
     let email = this.state.email;
     let password = this.state.password;
     const response = await this.apiFunction('http://localhost:5000/api/users', 'GET', null, true, {email, password});
     if (response.status === 200) {
       return response.json().then(data => {
-        console.log(data);
-        this.handleAuth(data);
-        return window.location.href = "#/courses";
+        this.handleName(data);
+        this.handleAuth(email, password);
+        return <Redirect to="/"/>;
       });
     }
     else if (response.status === 401) {

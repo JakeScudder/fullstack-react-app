@@ -14,7 +14,7 @@ class UpdateCourse extends Component {
 
   handleCancel = (event) => {
     event.preventDefault();
-    window.location.href = "#/courses";
+    return <Redirect to="/courses"/>;
   }
 
   //Helper function to handle state of inputs
@@ -48,7 +48,6 @@ class UpdateCourse extends Component {
   }
 
   handleUpdate = async () => {
-    debugger
     const {
       title,
       description,
@@ -56,9 +55,11 @@ class UpdateCourse extends Component {
       materialsNeeded,
     } = this.state;
 
-    const response = await this.apiFunction("http://localhost:5000/api/courses/:id", 'PUT', {title, description, estimatedTime, materialsNeeded}, this.props.authenticated);
+    let user = this.props.user
+
+    const response = await this.apiFunction("http://localhost:5000/api/courses/:id", 'PUT', {title, description, estimatedTime, materialsNeeded}, true, { user });
     if (response.status === 204) {
-      return <Redirect to="#/courses" />
+      return <Redirect to="/" />
     } else if (response.status === 401) {
       return null;
     }
@@ -68,7 +69,7 @@ class UpdateCourse extends Component {
   }
 
   handleSubmit = (event) => {
-    event.preventdefault();
+    event.preventDefault();
     this.handleUpdate();
   }
   
@@ -83,7 +84,6 @@ class UpdateCourse extends Component {
     // let firstName = course.User.firstName 
     // This won't work unless the if statement is run
     if (course && course.User) {
-      console.log(course);
       firstName = course.User.firstName + " ";
       lastName = course.User.lastName;
       instructor = firstName.concat(lastName);

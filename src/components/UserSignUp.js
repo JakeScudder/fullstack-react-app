@@ -50,8 +50,8 @@ class UserSignUp extends Component {
     });
   }
 
-  handleAuth = (data) => {
-    this.props.updateState(data);
+  handleAuth = (email, password) => {
+    this.props.updateState(email, password);
   }
   //Sign in user after signing up
   handleSignIn = async () => {
@@ -59,11 +59,11 @@ class UserSignUp extends Component {
     let password = this.state.password;
     const response = await this.apiFunction('http://localhost:5000/api/users', 'GET', null, true, {email, password});
     if (response.status === 200) {
-      return response.json().then(data => {
-        console.log(data);
-        this.handleAuth(data);
+      // return response.json().then(data => {
+      //   console.log(data);
+        this.handleAuth(email, password);
         return;
-      });
+      // });
     }
     else if (response.status === 401) {
       return null;

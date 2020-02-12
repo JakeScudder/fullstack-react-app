@@ -4,7 +4,7 @@ class CreateCourse extends Component {
 
   handleCancel = (event) => {
     event.preventDefault();
-    window.location.href = "#/courses";
+    // window.location.href = "/courses";
   }
 
   render() {

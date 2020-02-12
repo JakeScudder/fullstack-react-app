@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 
 class Courses extends Component {
   constructor (props) {
@@ -17,12 +18,12 @@ class Courses extends Component {
     return (
     <div className="bounds">
     { this.props.data.map(course => {
-      let url = `#/courses/${course.id}`
+      let url = `/courses/${course.id}`
         return (
-          <div onClick={this.handleClick} key={course.id}  className="grid-33"><a data-course={course.id} className="course--module course--link" href={url}>
+          <div onClick={this.handleClick} key={course.id}  className="grid-33"><Link data-course={course.id} className="course--module course--link" to={url}>
             <h4 data-course={course.id} className="course--label"> Course </h4>
             <h3 data-course={course.id} className="course--title"> {course.title}</h3>
-            </a></div>
+            </Link></div>
         ) 
       })
       }

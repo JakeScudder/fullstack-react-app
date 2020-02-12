@@ -4,11 +4,12 @@ import {
   HashRouter,
   Route,
   Switch,
-  Redirect, 
+  Redirect,
 } from 'react-router-dom';
 
 //Auth Route
 import PrivateRoute from './PrivateRoute';
+import Cookies from 'js-cookie';
 
 //Components
 import Header from './components/Header';
@@ -26,8 +27,9 @@ class App extends Component {
   constructor() {
   super();
     this.state = {
-      authenticatedUser: "",
-      isAuthenticated: null,
+      authenticatedUser: Cookies.getJSON('authenticatedUser') || null,
+      name: Cookies.getJSON('name') || null,
+      isAuthenticated: Cookies.getJSON('isAuthenticated') || null,
       course: [],
       courses: [],
       loading: true
@@ -38,11 +40,17 @@ class App extends Component {
     this.handleFetch();
   }
 
-  handleAuthUser = (user) => {
+  handleAuthUser = (email, password, data) => {
+    let object = {email, password};
     this.setState({
-      authenticatedUser: user,
-      isAuthenticated: true
+      authenticatedUser: object,
+      isAuthenticated: true,
+      name: data,
     })
+    console.log(this.state.authenticatedUser);
+    Cookies.set('authenticatedUser', JSON.stringify(object), {expires: 1});
+    Cookies.set('isAuthenticated' === true, {expires: 1});
+    Cookies.set('name', JSON.stringify(data), {expires: 1})
   }
 
   handleFetch = (query = "") => {
@@ -70,22 +78,27 @@ class App extends Component {
   }
 
   signOut = () => {
-    this.setState({ authenticatedUser: null, isAuthenticated: null });
+    this.setState({ 
+      authenticatedUser: null, 
+      isAuthenticated: null, 
+      name: "" 
+    });
+    Cookies.remove();
+    return <Redirect to="/" />;
   }
 
   render() {
     return (
       <HashRouter>
-        <Header user={this.state.authenticatedUser}/>
+        <Header user={this.state.name}/>
           <div>
           { (this.state.loading) 
             ?  <p className="loading" >Loading...</p>
             :  null
           }
             <Switch>
-              <Redirect exact from="/" to="/courses"/>
               <Route 
-                exact path="/courses"
+                exact path="/"
                 render={(props) => <Courses fetchCourse={this.handleFetch} {...props} data={this.state.courses} /> }
               />
               <PrivateRoute 
@@ -107,9 +120,9 @@ class App extends Component {
                 render={(props) => <CourseDetail {...props}  data={this.state.course} /> }
               />
               <PrivateRoute 
-                exact path="/courses/:id/update"
+                path="/courses/:id/update"
                 authenticated={this.state.isAuthenticated}
-                component={(props) => <UpdateCourse {...props} authenticated={this.state.isAuthenticated} data={this.state.course}/> }
+                component={(props) => <UpdateCourse {...props} user={this.state.authenticatedUser} data={this.state.course}/> }
               />
               <Route path="/signout" render={(props) => <UserSignOut {...props} logOut={this.signOut} />}
               />
