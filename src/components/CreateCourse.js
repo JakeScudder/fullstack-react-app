@@ -9,6 +9,7 @@ class CreateCourse extends Component {
         description: "",
         estimatedTime: "",
         materialsNeeded: "",
+        formatMessage: null,
       };
     }
 
@@ -48,7 +49,6 @@ class CreateCourse extends Component {
   }
 
   handleUpdate = async () => {
-    debugger
     const {
       userId,
       title,
@@ -63,9 +63,21 @@ class CreateCourse extends Component {
 
     const response = await this.apiFunction(url, 'POST', {userId, title, description, estimatedTime, materialsNeeded}, true, { email, password });
     if (response.status === 201) {
-      this.props.history.push('/');
+      window.location.href = '/';
     } else if (response.status === 401) {
+      response.json().then(data => ({
+        data: data,
+        status: response.status
+      })
+      ).then(res => {
+        console.log(res.data.errors);
+        let errors = res.data.errors;
+        this.setState({
+          formatMessage: errors
+        }) 
+      });
       return null;
+      // this.props.history.push('/courses/create');
     }
     else {
       throw new Error();
@@ -86,11 +98,21 @@ class CreateCourse extends Component {
       <h1>Create Course</h1>
       <div>
         <div>
-          <h2 className="validation--errors--label">Validation errors</h2>
+        { (this.state.formatMessage)
+          ?
+            <h2 class="validation--errors--label">Validation errors</h2>
+          : null
+        }
           <div className="validation-errors">
             <ul>
-              <li>Please provide a value for "Title"</li>
-              <li>Please provide a value for "Description"</li>
+              { (this.state.formatMessage) 
+              ?  <li>
+                    { this.state.formatMessage.map(error => {
+                    return <li>{error}</li>
+                    })}
+                </li>
+              :  null
+              } 
             </ul>
           </div>
         </div>

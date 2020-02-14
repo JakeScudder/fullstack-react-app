@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
 
 // import { Redirect } from 'react-router-dom';
 
@@ -69,7 +68,6 @@ class UserSignIn extends Component {
     if (response.status === 200) {
       return response.json().then(data => {
         this.handleAuth(email, password, data);
-        return <Redirect to="/"/>;
       });
     }
     else if (response.status === 401) {

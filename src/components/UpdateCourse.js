@@ -9,6 +9,7 @@ class UpdateCourse extends Component {
         description: this.props.course.description,
         estimatedTime: this.props.course.estimatedTime,
         materialsNeeded: this.props.course.materialsNeeded,
+        formatMessage: null,
       };
     }
 
@@ -64,7 +65,18 @@ class UpdateCourse extends Component {
     const response = await this.apiFunction(url, 'PUT', {title, description, estimatedTime, materialsNeeded}, true, { email, password });
     if (response.status === 204) {
       this.props.history.push('/');
-    } else if (response.status === 401) {
+    } else if (response.status === 400) {
+      response.json().then(data => ({
+        data: data,
+        status: response.status
+      })
+      ).then(res => {
+        console.log(res.data.errors);
+        let errors = res.data.errors;
+        this.setState({
+          formatMessage: errors
+        }) 
+      });
       return null;
     }
     else {
@@ -97,6 +109,25 @@ class UpdateCourse extends Component {
       <div className="bounds course--detail">
         <h1>Update Course</h1>
         <div>
+          <div>
+          { (this.state.formatMessage)
+          ?
+              <h2 class="validation--errors--label">Validation errors</h2>
+              : null
+          }
+              <div class="validation-errors">
+                <ul>
+                  { (this.state.formatMessage) 
+                  ?  <li>
+                      { this.state.formatMessage.map(error => {
+                      return <li>{error}</li>
+                      })}
+                    </li>
+                  :  null
+                  } 
+                </ul>
+              </div>
+            </div>
           <form onSubmit={this.handleSubmit} >
             <div className="grid-66">
               <div className="course--header">

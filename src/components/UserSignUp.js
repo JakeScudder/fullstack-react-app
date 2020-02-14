@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
 
 class UserSignUp extends Component {
 
@@ -16,7 +17,7 @@ class UserSignUp extends Component {
 
   handleCancel = (event) => {
     event.preventDefault();
-    window.location.href = "#/courses";
+    window.location.href = "/";
   }
 
    //I didn't know how to write my own version of this helper function, but it is pretty much identical to the workshop
@@ -50,20 +51,21 @@ class UserSignUp extends Component {
     });
   }
 
-  handleAuth = (email, password) => {
-    this.props.updateState(email, password);
+  handleAuth = (email, password, data) => {
+    this.props.updateState(email, password, data);
   }
   //Sign in user after signing up
   handleSignIn = async () => {
+    debugger
     let email = this.state.emailAddress;
     let password = this.state.password;
     const response = await this.apiFunction('http://localhost:5000/api/users', 'GET', null, true, {email, password});
     if (response.status === 200) {
-      // return response.json().then(data => {
-      //   console.log(data);
-        this.handleAuth(email, password);
-        return;
-      // });
+      return response.json().then(data => {
+        console.log(data);
+        this.handleAuth(email, password, data);
+        return <Redirect to="/"/>;
+      });
     }
     else if (response.status === 401) {
       return null;
@@ -85,7 +87,8 @@ class UserSignUp extends Component {
     const response = await this.apiFunction('http://localhost:5000/api/users', 'POST', user);
     if (response.status === 201) {
       this.handleSignIn();
-      return [];
+      this.props.history.push('/');
+      return null;
     }
     else if (response.status === 400) {
       return response.json().then(data => {

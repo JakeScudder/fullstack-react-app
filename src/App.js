@@ -133,7 +133,7 @@ class App extends Component {
               />
               <Route 
                 exact path="/courses/:id"
-                render={(props) => <CourseDetail {...props}  data={this.state.course} /> }
+                render={(props) => <CourseDetail {...props} authUser={this.state.authUser} user={this.state.name} course={this.state.course} /> }
               />
               <PrivateRoute 
                 path="/courses/:id/update"

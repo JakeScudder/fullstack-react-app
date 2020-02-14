@@ -86,7 +86,7 @@ router.post('/courses', [
   //If there are errors
   if(!errors.isEmpty()) {
     const errorMessages = errors.array().map(error => error.msg);
-    return res.status(400).json({errors: errorMessages});
+    return res.status(401).json({errors: errorMessages});
   }
   //Create course
   try {
