@@ -64,7 +64,7 @@ class UserSignUp extends Component {
       return response.json().then(data => {
         console.log(data);
         this.handleAuth(email, password, data);
-        return <Redirect to="/"/>;
+        return <Redirect to="/courses"/>;
       });
     }
     else if (response.status === 401) {

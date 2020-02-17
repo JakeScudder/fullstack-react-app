@@ -20,6 +20,9 @@ import UserSignUp from './components/UserSignUp';
 import UserSignOut from './components/UserSignOut';
 import CreateCourse from './components/CreateCourse';
 import UpdateCourse from './components/UpdateCourse';
+import NotFound from './components/NotFound';
+import Forbidden from './components/Forbidden';
+import UnhandledError from './components/UnhandledError';
 
 
 class App extends Component {
@@ -30,7 +33,7 @@ class App extends Component {
       authUser: Cookies.getJSON('authUser') || null,
       name: Cookies.getJSON('name') || null,
       isAuth: Cookies.getJSON('isAuth') || null,
-      course: [],
+      courseId: "",
       courses: [],
       loading: true
     };
@@ -54,12 +57,20 @@ class App extends Component {
     Cookies.set('name', JSON.stringify(data), {expires: 1})
   }
 
+//   handleErrors = (response) => {
+//     if (!response.ok) {
+//         throw Error(response.statusText);
+//     }
+//     return response;
+// }
+
   //Fetch all Courses
   handleFetchCourses = () => {
     this.setState({
       loading: true
     })
-    axios.get(`http://localhost:5000/api/courses/`)
+    axios.get(`http://localhost:5000/api/courses`)
+      // .then(this.handleErrors)
       .then(res => {
           this.setState({
             courses: res.data.courses,
@@ -67,28 +78,20 @@ class App extends Component {
           }) 
         }
       )
-    .catch(error => {
-      console.log('Error fetching and parsing data', error)
+      .catch(error => {
+        console.log('Error fetching and parsing data', error)
+        window.location.href = '/error'
+        return null; 
+      })
+  }
+
+  setCourseID = (query) => {
+    this.setState({
+      courseId: query,
     })
   }
 
-  // Fetch individual Courses
-  handleFetchCourse = (query = "") => {
-    this.setState({
-      loading: true
-    })
-    axios.get(`http://localhost:5000/api/courses/${query}`)
-      .then(res => {
-          this.setState({
-            course: res.data,
-            loading: false
-          }) 
-        } 
-      )
-    .catch(error => {
-      console.log('Error fetching and parsing data', error)
-    })
-  }
+
 
 
   signOut = () => {
@@ -114,8 +117,8 @@ class App extends Component {
           }
             <Switch>
               <Route 
-                exact path="/"
-                render={(props) => <Courses fetchCourses={this.handleFetchCourses} fetchCourse={this.handleFetchCourse} {...props} data={this.state.courses} /> }
+                exact path="/courses"
+                render={(props) => <Courses fetchCourses={this.handleFetchCourses} fetchCourse={this.setCourseID} {...props} data={this.state.courses} /> }
               />
               <PrivateRoute 
                 authenticated={this.state.isAuth}
@@ -133,14 +136,24 @@ class App extends Component {
               />
               <Route 
                 exact path="/courses/:id"
-                render={(props) => <CourseDetail {...props} authUser={this.state.authUser} user={this.state.name} course={this.state.course} /> }
+                render={(props) => <CourseDetail {...props} authUser={this.state.authUser} user={this.state.name} courseId={this.state.courseId} /> }
               />
               <PrivateRoute 
-                path="/courses/:id/update"
+                exact path="/courses/:id/update"
                 authenticated={this.state.isAuth}
-                component={(props) => <UpdateCourse {...props} user={this.state.authUser} course={this.state.course}/> }
+                component={(props) => <UpdateCourse {...props} user={this.state.authUser} name={this.state.name} courseId={this.state.courseId}/> }
               />
+              <Redirect from="/" to="/courses" exact /> 
               <Route path="/signout" render={(props) => <UserSignOut {...props} logOut={this.signOut} />}
+              />
+              <Route 
+                 path="/forbidden" component={(props) => <Forbidden {...props} courseId={this.state.courseId} />}
+              />
+              <Route 
+                 path="/error" component={(props) => <UnhandledError {...props} courseId={this.state.courseId} />}
+              />
+              <Route 
+                 component={(props) => <NotFound {...props} courseId={this.state.courseId} />}
               />
             </Switch>
           </div>

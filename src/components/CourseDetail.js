@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
+import axios from 'axios';
 
 class CourseDetail extends Component {
   constructor (props) {
@@ -9,23 +10,49 @@ class CourseDetail extends Component {
       loading: true,
       showing: null,
       canUpdateOrDelete: null,
+      courseId: this.props.courseId,
+      course: [],
     } 
   }
 
   componentDidMount() {
-    setTimeout(this.userMatchCourseOwner, 500);
+    // setTimeout(this.userMatchCourseOwner, 500);
+    this.handleFetchCourse();
+  }
+
+  // Fetch individual Courses
+  handleFetchCourse = () => {
+    // let query = this.state.courseId;
+    let query = this.props.match.params.id;
+    this.setState({
+      loading: true,
+    })
+    axios.get(`http://localhost:5000/api/courses/${query}`)
+      .then(res => {
+        console.log(res);
+        this.setState({
+          course: res.data,
+          loading: false
+        }) 
+        setTimeout(this.userMatchCourseOwner, 500);
+      })
+    .catch(error => {
+      console.log('Error fetching and parsing data', error);
+      // this.props.history.push('/notfound');
+    })
   }
 
   userMatchCourseOwner = () => {
-    if (this.props.user) {
+    if (this.props.user && this.state.course) {
       let userId = this.props.user.id
-      let courseOwner = this.props.course.userId;
+      let courseOwner = this.state.course.userId;
       if (userId === courseOwner) {
         this.setState({
           canUpdateOrDelete: true,
         })
-      }
+      } 
     } else {
+      this.props.history.push('/notfound')
       return null;
     }
   }
@@ -84,13 +111,13 @@ class CourseDetail extends Component {
 
 
   render() {
-    let course = this.props.course;
-    let description = course.description;
-    let materialsNeeded = course.materialsNeeded;
+    let course = this.state.course;
+    let description
+    let materialsNeeded
     let firstName;
     let lastName;
     let instructor;
-    let courseUpdateUrl = `/courses/${course.id}/update`
+    let courseUpdateUrl;
 
     //Why is there a delay between accessing the nested object?
     //i.e. 
@@ -100,51 +127,57 @@ class CourseDetail extends Component {
       firstName = course.User.firstName + " ";
       lastName = course.User.lastName;
       instructor = firstName.concat(lastName);
+      description = course.description;
+      materialsNeeded = course.materialsNeeded;
+      courseUpdateUrl = `/courses/${course.id}/update`
     }
-    
-    return(
-      <div>
-        <div className="actions--bar">
-          <div className="bounds">
-            <div className="grid-100"><span><Link className="button" style={{display: this.state.canUpdateOrDelete ? '' : "none"}} to={courseUpdateUrl}>Update Course</Link><button className="button" style={{display: this.state.canUpdateOrDelete ? '' : "none"}} onClick={this.areYouSure}>Delete Course</button></span><a
-                className="button button-secondary" href="/">Return to List</a></div>
-            <div name="delete-confirmation" style={{display: this.state.showing ? 'block' : "none"}}>
-              <h3>Are you sure you want to delete this course?</h3>
-              <button onClick={this.handleDeletion}>Yes, delete this course</button>
-              <button onClick={this.areYouSure}>No, I don't want to delete this</button>
+    if (course) {
+      return(
+        <div>
+          <div className="actions--bar">
+            <div className="bounds">
+              <div className="grid-100"><span><Link className="button" style={{display: this.state.canUpdateOrDelete ? '' : "none"}} to={courseUpdateUrl}>Update Course</Link><button className="button" style={{display: this.state.canUpdateOrDelete ? '' : "none"}} onClick={this.areYouSure}>Delete Course</button></span><a
+                  className="button button-secondary" href="/courses">Return to List</a></div>
+              <div name="delete-confirmation" style={{display: this.state.showing ? 'block' : "none"}}>
+                <h3>Are you sure you want to delete this course?</h3>
+                <button onClick={this.handleDeletion}>Yes, delete this course</button>
+                <button onClick={this.areYouSure}>No, I don't want to delete this</button>
+              </div>
+            </div>
+          </div>
+          <div className="bounds course--detail">
+            <div className="grid-66">
+              <div className="course--header">
+                <h4 className="course--label">Course</h4>
+                <h3 className="course--title">{course.title}</h3>
+                <p>By {instructor}</p>
+              </div>
+              <div className="course--description">
+                <ReactMarkdown source={description} />
+              </div>
+            </div>
+            <div className="grid-25 grid-right">
+              <div className="course--stats">
+                <ul className="course--stats--list">
+                  <li className="course--stats--list--item">
+                    <h4>Estimated Time</h4>
+                    <h3>{course.estimatedTime}</h3>
+                  </li>
+                  <li className="course--stats--list--item">
+                    <h4>Materials Needed</h4>
+                    <ul>
+                      <ReactMarkdown source={materialsNeeded}/>
+                    </ul>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
-        <div className="bounds course--detail">
-          <div className="grid-66">
-            <div className="course--header">
-              <h4 className="course--label">Course</h4>
-              <h3 className="course--title">{course.title}</h3>
-              <p>By {instructor}</p>
-            </div>
-            <div className="course--description">
-              <ReactMarkdown source={description} />
-            </div>
-          </div>
-          <div className="grid-25 grid-right">
-            <div className="course--stats">
-              <ul className="course--stats--list">
-                <li className="course--stats--list--item">
-                  <h4>Estimated Time</h4>
-                  <h3>{course.estimatedTime}</h3>
-                </li>
-                <li className="course--stats--list--item">
-                  <h4>Materials Needed</h4>
-                  <ul>
-                    <ReactMarkdown source={materialsNeeded}/>
-                  </ul>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
+      )
+    } else {
+      return null;
+    }  
   }
 }
 

@@ -35,7 +35,7 @@ class UserSignIn extends Component {
 
   handleCancel = (event) => {
     event.preventDefault();
-    window.location.href = '/';
+    window.location.href = '/courses';
   }
 
   handleEmail = (e) => {
@@ -57,17 +57,19 @@ class UserSignIn extends Component {
   handleSubmit = async (event) => {
     event.preventDefault();
     this.handleSignIn();
-    this.props.history.push('/');
+    
   }
 
 
   handleSignIn = async () => {
+    const { from } = this.props.location.state || { from: { pathname: '/' } };
     let email = this.state.email;
     let password = this.state.password;
     const response = await this.apiFunction('http://localhost:5000/api/users', 'GET', null, true, {email, password});
     if (response.status === 200) {
       return response.json().then(data => {
         this.handleAuth(email, password, data);
+        this.props.history.push(from);
       });
     }
     else if (response.status === 401) {
@@ -91,7 +93,7 @@ class UserSignIn extends Component {
             </form>
           </div>
           <p>&nbsp;</p>
-          <p>Don't have a user account? <a href="#/signup">Click here</a> to sign up!</p>
+          <p>Don't have a user account? <a href="/signup">Click here</a> to sign up!</p>
         </div>
       </div>
     )

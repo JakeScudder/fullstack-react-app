@@ -1,21 +1,67 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 
 class UpdateCourse extends Component {
   constructor(props) {
     super(props);
-      this.state = {
-        id: this.props.course.id,
-        title: this.props.course.title,
-        description: this.props.course.description,
-        estimatedTime: this.props.course.estimatedTime,
-        materialsNeeded: this.props.course.materialsNeeded,
-        formatMessage: null,
-      };
-    }
+    this.state = {
+      courseId: this.props.courseId,
+      title: "",
+      description: "",
+      estimatedTime: "",
+      materialsNeeded: "",
+      formatMessage: null,
+    };
+  }
+
+  componentDidMount() {
+    this.handleFetchCourse();
+  }
+
+  checkPermissions = () => {
+    debugger
+    console.log(this.props.name)
+    console.log(this.state.course)
+    if (this.props.name&& this.state.course) {
+      let userId = this.props.name.id
+      let courseOwner = this.state.course.userId;
+      if (userId !== courseOwner) {
+        this.props.history.push('/forbidden');
+      } 
+    } 
+  }
 
   handleCancel = (event) => {
     event.preventDefault();
-    this.props.history.push('/');
+    this.props.history.push('/courses');
+  }
+
+   // Fetch individual Courses
+   handleFetchCourse = () => {
+    // let query = this.state.courseId;
+    let query = this.props.match.params.id;
+    this.setState({
+      loading: true,
+    })
+    console.log(this.props.match.params.id);
+    axios.get(`http://localhost:5000/api/courses/${query}`)
+      .then(res => {
+          this.setState({
+            course: res.data,
+            title: res.data.title,
+            description: res.data.description,
+            estimatedTime: res.data.estimatedTime,
+            materialsNeeded: res.data.materialsNeeded,
+            loading: false
+          }) 
+          this.checkPermissions(); 
+        }
+        
+      )
+    .catch(error => {
+      console.log('Error fetching and parsing data', error);
+      this.props.history.push('/notfound');
+    })
   }
 
   //Helper function to handle state of inputs
@@ -90,7 +136,7 @@ class UpdateCourse extends Component {
   }
   
   render() {
-    let course = this.props.course
+    let course = this.state.course
     let firstName;
     let lastName;
     let instructor;
@@ -112,10 +158,10 @@ class UpdateCourse extends Component {
           <div>
           { (this.state.formatMessage)
           ?
-              <h2 class="validation--errors--label">Validation errors</h2>
+              <h2 className="validation--errors--label">Validation errors</h2>
               : null
           }
-              <div class="validation-errors">
+              <div className="validation-errors">
                 <ul>
                   { (this.state.formatMessage) 
                   ?  <li>

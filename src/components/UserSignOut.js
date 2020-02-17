@@ -4,7 +4,7 @@ import { Redirect } from 'react-router-dom';
 const UserSignOut = (props) => {
   props.logOut();
   return (
-    <Redirect to='/' />
+    <Redirect to='/courses' />
   )
 }
 
