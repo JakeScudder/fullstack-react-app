@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { Animated } from 'react-animated-css';
 
 class Courses extends Component {
   constructor (props) {
@@ -16,6 +17,7 @@ class Courses extends Component {
 
   render() {
     return (
+      <Animated animationIn="fadeInLeft">
     <div className="bounds">
     { this.props.data.map(course => {
       let url = `/courses/${course.id}`
@@ -34,6 +36,7 @@ class Courses extends Component {
               </svg>New Course</h3>
           </a></div>
     </div>
+    </Animated>
     )
   }
 }

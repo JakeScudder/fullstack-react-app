@@ -52,7 +52,7 @@ class App extends Component {
       isAuth: true,
       name: data,
     })
-    console.log(this.state.authUser);
+    // console.log(this.state.authUser);
     Cookies.set('authUser', JSON.stringify(object), {expires: 1});
     Cookies.set('isAuth', true, {expires: 1});
     Cookies.set('name', JSON.stringify(data), {expires: 1})
