@@ -78,6 +78,8 @@ class CreateCourse extends Component {
       });
       return null;
       // this.props.history.push('/courses/create');
+    } else if(response.status === 500) {
+      this.props.history.push('/error');
     }
     else {
       throw new Error();

@@ -10,6 +10,7 @@ import {
 //Auth Route
 import PrivateRoute from './PrivateRoute';
 import Cookies from 'js-cookie';
+// import { withRouter } from 'react-router-dom'
 
 //Components
 import Header from './components/Header';
@@ -27,8 +28,8 @@ import UnhandledError from './components/UnhandledError';
 
 class App extends Component {
 
-  constructor() {
-  super();
+  constructor(props) {
+  super(props);
     this.state = {
       authUser: Cookies.getJSON('authUser') || null,
       name: Cookies.getJSON('name') || null,
@@ -57,12 +58,14 @@ class App extends Component {
     Cookies.set('name', JSON.stringify(data), {expires: 1})
   }
 
-//   handleErrors = (response) => {
-//     if (!response.ok) {
-//         throw Error(response.statusText);
-//     }
-//     return response;
-// }
+  errorHandler(res) {
+    if (res.status === 500) {
+      let error = new Error();
+      error.status = 500;
+      throw error;
+    }
+    return res;
+  }
 
   //Fetch all Courses
   handleFetchCourses = () => {
@@ -70,7 +73,7 @@ class App extends Component {
       loading: true
     })
     axios.get(`http://localhost:5000/api/courses`)
-      // .then(this.handleErrors)
+      .then(this.errorHandler)
       .then(res => {
           this.setState({
             courses: res.data.courses,
@@ -79,9 +82,12 @@ class App extends Component {
         }
       )
       .catch(error => {
-        console.log('Error fetching and parsing data', error)
-        window.location.href = '/error'
-        return null; 
+        if (error.status === 500) {
+          this.props.history.push('/error');
+        } else {
+          console.log('Error fetching and parsing data', error);
+          this.props.history.push('/notfound');
+        }
       })
   }
 

@@ -74,6 +74,8 @@ class UserSignIn extends Component {
     }
     else if (response.status === 401) {
       return null;
+    } else if (response.status === 500) {
+      this.props.history.push('/error');
     }
     else {
       throw new Error();

@@ -5,7 +5,7 @@ class UpdateCourse extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      courseId: this.props.courseId,
+      courseId: this.props.match.params.id,
       title: "",
       description: "",
       estimatedTime: "",
@@ -19,9 +19,9 @@ class UpdateCourse extends Component {
   }
 
   checkPermissions = () => {
-    debugger
-    console.log(this.props.name)
-    console.log(this.state.course)
+    // debugger
+    // console.log(this.props.name)
+    // console.log(this.state.course)
     if (this.props.name&& this.state.course) {
       let userId = this.props.name.id
       let courseOwner = this.state.course.userId;
@@ -36,31 +36,47 @@ class UpdateCourse extends Component {
     this.props.history.push('/courses');
   }
 
+  errorHandler(res) {
+    if (res.status === 500) {
+      let error = new Error();
+      error.status = 500;
+      throw error;
+    }
+    return res;
+  }
+
    // Fetch individual Courses
    handleFetchCourse = () => {
-    // let query = this.state.courseId;
     let query = this.props.match.params.id;
     this.setState({
       loading: true,
     })
-    console.log(this.props.match.params.id);
     axios.get(`http://localhost:5000/api/courses/${query}`)
+      .then(this.errorHandler)
       .then(res => {
           this.setState({
             course: res.data,
             title: res.data.title,
             description: res.data.description,
-            estimatedTime: res.data.estimatedTime,
-            materialsNeeded: res.data.materialsNeeded,
             loading: false
           }) 
+          if (res.data.estimatedTime) {
+            this.setState({estimatedTime: res.data.estimatedTime})
+          }
+          if (res.data.materialsNeeded) {
+            this.setState({materialsNeeded: res.data.materialsNeeded})
+          }
           this.checkPermissions(); 
         }
         
       )
     .catch(error => {
-      console.log('Error fetching and parsing data', error);
-      this.props.history.push('/notfound');
+      if (error.status === 500) {
+        this.props.history.push('/error');
+      } else {
+        console.log('Error fetching and parsing data', error);
+        this.props.history.push('/notfound');
+      }
     })
   }
 
@@ -104,13 +120,13 @@ class UpdateCourse extends Component {
     
     let email = this.props.user.email;
     let password = this.props.user.password;
-    let courseId = this.state.id;
+    let courseId = this.state.courseId;
     let url = `http://localhost:5000/api/courses/${courseId}`
     console.log(url);
 
     const response = await this.apiFunction(url, 'PUT', {title, description, estimatedTime, materialsNeeded}, true, { email, password });
     if (response.status === 204) {
-      this.props.history.push('/');
+      window.location.href ='/';
     } else if (response.status === 400) {
       response.json().then(data => ({
         data: data,
@@ -124,6 +140,8 @@ class UpdateCourse extends Component {
         }) 
       });
       return null;
+    } else if (response.status === 500) {
+      this.props.history.push('/error');
     }
     else {
       throw new Error();

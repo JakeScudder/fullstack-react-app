@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import axios from 'axios';
 
@@ -10,7 +10,7 @@ class CourseDetail extends Component {
       loading: true,
       showing: null,
       canUpdateOrDelete: null,
-      courseId: this.props.courseId,
+      courseId: this.props.match.params.id,
       course: [],
     } 
   }
@@ -20,25 +20,37 @@ class CourseDetail extends Component {
     this.handleFetchCourse();
   }
 
+  errorHandler(res) {
+    if (res.status === 500) {
+      let error = new Error();
+      error.status = 500;
+      throw error;
+    }
+    return res;
+  }
+
   // Fetch individual Courses
   handleFetchCourse = () => {
-    // let query = this.state.courseId;
-    let query = this.props.match.params.id;
+    let query = this.state.courseId;
     this.setState({
       loading: true,
     })
     axios.get(`http://localhost:5000/api/courses/${query}`)
+      .then(this.errorHandler)
       .then(res => {
-        console.log(res);
-        this.setState({
-          course: res.data,
-          loading: false
-        }) 
-        setTimeout(this.userMatchCourseOwner, 500);
+          this.setState({
+            course: res.data,
+            loading: false
+          }) 
+          setTimeout(this.userMatchCourseOwner, 500);
       })
     .catch(error => {
-      console.log('Error fetching and parsing data', error);
-      // this.props.history.push('/notfound');
+      if (error.status === 500) {
+        this.props.history.push('/error');
+      } else {
+        console.log('Error fetching and parsing data', error);
+        this.props.history.push('/notfound');
+      }
     })
   }
 
@@ -52,7 +64,7 @@ class CourseDetail extends Component {
         })
       } 
     } else {
-      this.props.history.push('/notfound')
+      // this.props.history.push('/notfound')
       return null;
     }
   }
@@ -71,9 +83,10 @@ class CourseDetail extends Component {
 
   //Handles Deletion
   handleDeletion = async () => {
+    debugger
     let email = this.props.authUser.email;
     let password = this.props.authUser.password;
-    let courseId = this.props.course.id;
+    let courseId = this.state.courseId;
     let url = `http://localhost:5000/api/courses/${courseId}`
 
     const response = await this.apiFunction(url, 'DELETE', null, true, { email, password });
@@ -136,7 +149,7 @@ class CourseDetail extends Component {
         <div>
           <div className="actions--bar">
             <div className="bounds">
-              <div className="grid-100"><span><Link className="button" style={{display: this.state.canUpdateOrDelete ? '' : "none"}} to={courseUpdateUrl}>Update Course</Link><button className="button" style={{display: this.state.canUpdateOrDelete ? '' : "none"}} onClick={this.areYouSure}>Delete Course</button></span><a
+              <div className="grid-100"><span><a className="button" style={{display: this.state.canUpdateOrDelete ? '' : "none"}} href={courseUpdateUrl}>Update Course</a><button className="button" style={{display: this.state.canUpdateOrDelete ? '' : "none"}} onClick={this.areYouSure}>Delete Course</button></span><a
                   className="button button-secondary" href="/courses">Return to List</a></div>
               <div name="delete-confirmation" style={{display: this.state.showing ? 'block' : "none"}}>
                 <h3>Are you sure you want to delete this course?</h3>

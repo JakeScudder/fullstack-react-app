@@ -56,19 +56,19 @@ class UserSignUp extends Component {
   }
   //Sign in user after signing up
   handleSignIn = async () => {
-    debugger
     let email = this.state.emailAddress;
     let password = this.state.password;
     const response = await this.apiFunction('http://localhost:5000/api/users', 'GET', null, true, {email, password});
     if (response.status === 200) {
       return response.json().then(data => {
-        console.log(data);
         this.handleAuth(email, password, data);
         return <Redirect to="/courses"/>;
       });
     }
     else if (response.status === 401) {
       return null;
+    } else if (response.status === 500) {
+      this.props.history.push('/error')
     }
     else {
       throw new Error();
@@ -77,7 +77,6 @@ class UserSignUp extends Component {
   
   //User Sign Up Form
   handleSubmit = async (event) => {
-    debugger
     const {firstName, lastName, emailAddress, password} = this.state;
     //create user 
     const user = {
@@ -94,6 +93,8 @@ class UserSignUp extends Component {
       return response.json().then(data => {
         return data.errors;
       });
+    } else if (response.status === 500) {
+      this.props.history.push('/error')
     }
     else {
       throw new Error();

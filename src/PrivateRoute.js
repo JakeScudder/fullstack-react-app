@@ -6,6 +6,7 @@ function PrivateRoute ({ component: Component, authenticated, ...rest}) {
     if(authenticated) {
       console.log("User is Authenticated")
     }
+    return null;
   }
 
   check();
