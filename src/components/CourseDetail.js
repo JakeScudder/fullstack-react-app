@@ -83,7 +83,6 @@ class CourseDetail extends Component {
 
   //Handles Deletion
   handleDeletion = async () => {
-    debugger
     let email = this.props.authUser.email;
     let password = this.props.authUser.password;
     let courseId = this.state.courseId;

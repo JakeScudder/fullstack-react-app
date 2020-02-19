@@ -16,12 +16,10 @@ class UpdateCourse extends Component {
 
   componentDidMount() {
     this.handleFetchCourse();
+    this.mounted = true;
   }
 
   checkPermissions = () => {
-    // debugger
-    // console.log(this.props.name)
-    // console.log(this.state.course)
     if (this.props.name&& this.state.course) {
       let userId = this.props.name.id
       let courseOwner = this.state.course.userId;
@@ -54,6 +52,7 @@ class UpdateCourse extends Component {
     axios.get(`http://localhost:5000/api/courses/${query}`)
       .then(this.errorHandler)
       .then(res => {
+        if (this.mounted) {
           this.setState({
             course: res.data,
             title: res.data.title,
@@ -68,7 +67,8 @@ class UpdateCourse extends Component {
           }
           this.checkPermissions(); 
         }
-        
+          
+        } 
       )
     .catch(error => {
       if (error.status === 500) {
@@ -133,11 +133,13 @@ class UpdateCourse extends Component {
         status: response.status
       })
       ).then(res => {
-        console.log(res.data.errors);
-        let errors = res.data.errors;
-        this.setState({
-          formatMessage: errors
-        }) 
+          console.log(res.data.errors);
+          let errors = res.data.errors;
+          if(this.mounted) {
+            this.setState({
+              formatMessage: errors
+            }) 
+          }  
       });
       return null;
     } else if (response.status === 500) {
@@ -151,6 +153,10 @@ class UpdateCourse extends Component {
   handleSubmit = (event) => {
     event.preventDefault();
     this.handleUpdate();
+  }
+
+  componentWillUnmount() {
+    this.mounted = false;
   }
   
   render() {
