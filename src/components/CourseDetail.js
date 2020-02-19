@@ -18,6 +18,11 @@ class CourseDetail extends Component {
   componentDidMount() {
     // setTimeout(this.userMatchCourseOwner, 500);
     this.handleFetchCourse();
+    this.mounted = true;
+  }
+
+  componentWillUnmount() {
+    this.mounted = false;
   }
 
   errorHandler(res) {
@@ -38,11 +43,13 @@ class CourseDetail extends Component {
     axios.get(`http://localhost:5000/api/courses/${query}`)
       .then(this.errorHandler)
       .then(res => {
+        if (this.mounted) {
           this.setState({
             course: res.data,
             loading: false
           }) 
           setTimeout(this.userMatchCourseOwner, 500);
+        }
       })
     .catch(error => {
       if (error.status === 500) {
@@ -188,6 +195,7 @@ class CourseDetail extends Component {
         </div>
       )
     } else {
+      this.props.history.push('/notfound');
       return null;
     }  
   }
