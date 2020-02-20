@@ -31,7 +31,7 @@ class UpdateCourse extends Component {
 
   handleCancel = (event) => {
     event.preventDefault();
-    this.props.history.push('/courses');
+    this.props.history.goBack();
   }
 
   errorHandler(res) {
@@ -188,11 +188,11 @@ class UpdateCourse extends Component {
               <div className="validation-errors">
                 <ul>
                   { (this.state.formatMessage) 
-                  ?  <li>
-                      { this.state.formatMessage.map(error => {
-                      return <li>{error}</li>
+                  ?  <div>
+                      { this.state.formatMessage.map((error, index) => {
+                      return <li key={index}>{error}</li>
                       })}
-                    </li>
+                    </div>
                   :  null
                   } 
                 </ul>

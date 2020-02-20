@@ -11,13 +11,18 @@ class UserSignUp extends Component {
       emailAddress: "",
       password: "",
       confirmPassword: "",
+      passwordError: null,
+      formatMessage: null,
       loading: true
     };
   }
 
-  handleCancel = (event) => {
-    event.preventDefault();
-    window.location.href = "/";
+  componentDidMount() {
+    this.mounted = true;
+  }
+
+  componentWillUnmount() {
+    this.mounted = false;
   }
 
    //I didn't know how to write my own version of this helper function, but it is pretty much identical to the workshop
@@ -76,13 +81,12 @@ class UserSignUp extends Component {
   }
   
   //User Sign Up Form
-  handleSubmit = async (event) => {
+  handleSignUp = async (event) => {
     const {firstName, lastName, emailAddress, password} = this.state;
     //create user 
     const user = {
       firstName, lastName, emailAddress, password,
     };
-    event.preventDefault();
     const response = await this.apiFunction('http://localhost:5000/api/users', 'POST', user);
     if (response.status === 201) {
       this.handleSignIn();
@@ -90,9 +94,20 @@ class UserSignUp extends Component {
       return null;
     }
     else if (response.status === 400) {
-      return response.json().then(data => {
-        return data.errors;
-      });
+      response.json().then(data => ({
+        data: data,
+        status: response.status
+      })
+      ).then(res => {
+          console.log(res.data.errors);
+          let errors = res.data.errors;
+          if(this.mounted) {
+            this.setState({
+              formatMessage: errors
+            }) 
+          }
+        });
+        return null; 
     } else if (response.status === 500) {
       this.props.history.push('/error')
     }
@@ -101,10 +116,29 @@ class UserSignUp extends Component {
     }
   }
 
+  handleSubmit = async (event) => {
+    event.preventDefault();
+    this.setState({formatMessage: null})
+    this.confirm()
+      
+    
+  }
+
+  handleCancel = (event) => {
+    event.preventDefault();
+    window.location.href = "/";
+  }
+
   confirm = () => {
-    if (this.state.password === this.state.confirmPassword) {
-      return true
+    if (this.state.password === this.state.confirmPassword && this.state.password !== "") {
+      this.setState({passwordError: null})
+      this.handleSignUp();
+      return null;
     } else {
+      console.log("Passwords do not match")
+      this.setState({
+        passwordError: "The passwords do not match, please try again."
+      })
       return false
     }
   }
@@ -123,6 +157,31 @@ class UserSignUp extends Component {
         <div className="grid-33 centered signin">
           <h1>Sign Up</h1>
           <div>
+            <div>
+            { (this.state.formatMessage || this.state.passwordError)
+            ?
+              <h2 className="validation--errors--label">Validation errors</h2>
+              : null
+            }
+                <div className="validation-errors">
+                  <ul>
+                    { (this.state.formatMessage) 
+                    ?  <div>
+                        { this.state.formatMessage.map((error, index) => {
+                        return <li key={index}>{error}</li>
+                        })}
+                      </div>
+                    :  null
+                    }
+                    { (this.state.passwordError)
+                    ? <div>
+                      <li>{this.state.passwordError}</li>
+                    </div>
+                    : null
+                    } 
+                  </ul>
+                </div>
+              </div>
             <form onSubmit={this.handleSubmit}>
               <div><input id="firstName" name="firstName" type="text" onChange={this.handleChange} className="" placeholder="First Name" value={firstName}/></div>
               <div><input id="lastName" name="lastName" type="text" onChange={this.handleChange} className="" placeholder="Last Name" value={lastName}/></div>

@@ -159,7 +159,7 @@ class App extends Component {
                  path="/error" component={(props) => <UnhandledError {...props} courseId={this.state.courseId} />}
               />
               <Route 
-                 component={(props) => <NotFound {...props} courseId={this.state.courseId} />}
+                 path='/notfound' component={(props) => <NotFound {...props} courseId={this.state.courseId} />}
               />
             </Switch>
           </div>
