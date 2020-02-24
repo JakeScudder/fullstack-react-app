@@ -25,8 +25,8 @@ class UserSignUp extends Component {
     this.mounted = false;
   }
 
-   //I didn't know how to write my own version of this helper function, but it is pretty much identical to the workshop
-   apiFunction(path, method = 'GET', body = null, requiresAuth = false, credentials = null ) {
+
+  apiFunction(path, method = 'GET', body = null, requiresAuth = false, credentials = null ) {
     const options = {
       method, 
       headers: {
@@ -59,6 +59,7 @@ class UserSignUp extends Component {
   handleAuth = (email, password, data) => {
     this.props.updateState(email, password, data);
   }
+  
   //Sign in user after signing up
   handleSignIn = async () => {
     let email = this.state.emailAddress;

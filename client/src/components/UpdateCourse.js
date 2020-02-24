@@ -43,7 +43,7 @@ class UpdateCourse extends Component {
     return res;
   }
 
-   // Fetch individual Courses
+   // Fetch individual Course
    handleFetchCourse = () => {
     let query = this.props.match.params.id;
     this.setState({
@@ -110,6 +110,7 @@ class UpdateCourse extends Component {
     return fetch(path, options);
   }
 
+  //Function that handles the course update
   handleUpdate = async () => {
     const {
       title,
@@ -150,11 +151,13 @@ class UpdateCourse extends Component {
     }
   }
 
+  //Handles Submission
   handleSubmit = (event) => {
     event.preventDefault();
     this.handleUpdate();
   }
 
+  //Prevents memory leak by preventing updates to state on unmounted components
   componentWillUnmount() {
     this.mounted = false;
   }

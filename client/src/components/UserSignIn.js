@@ -50,17 +50,18 @@ class UserSignIn extends Component {
     }) 
   }
 
+  //Sets authorization state in the main app.js file
   handleAuth = (email, password, data) => {
     this.props.updateState(email, password, data);
   }
 
+  //Handles form submission
   handleSubmit = async (event) => {
     event.preventDefault();
-    this.handleSignIn();
-    
+    this.handleSignIn();   
   }
 
-
+  //Handles user sign in
   handleSignIn = async () => {
     const { from } = this.props.location.state || { from: { pathname: '/' } };
     let email = this.state.email;

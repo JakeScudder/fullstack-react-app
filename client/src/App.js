@@ -58,6 +58,7 @@ class App extends Component {
     Cookies.set('name', JSON.stringify(data), {expires: 1})
   }
 
+  //Handles Global Errors
   errorHandler(res) {
     if (res.status === 500) {
       let error = new Error();
@@ -96,9 +97,6 @@ class App extends Component {
       courseId: query,
     })
   }
-
-
-
 
   signOut = () => {
     this.setState({ 
@@ -160,6 +158,9 @@ class App extends Component {
               />
               <Route 
                  path='/notfound' component={(props) => <NotFound {...props} courseId={this.state.courseId} />}
+              />
+              <Route 
+                 component={(props) => <NotFound {...props} courseId={this.state.courseId} />}
               />
             </Switch>
           </div>
