@@ -66,6 +66,7 @@ router.post('/users',[
     .exists({ checkNull: true, checkFalsy: true })
     .withMessage('Please include your "last name"'),
   check('emailAddress')
+    .isEmail()
     .exists({ checkNull: true, checkFalsy: true })
     .withMessage('Please include your "email"'),
   check('password')
@@ -82,8 +83,6 @@ router.post('/users',[
   let user;
   try {
     let email = req.body.emailAddress
-    let emailTest = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(email)
-    if (emailTest) {
       user = await User.create({
         firstName: req.body.firstName,
         lastName: req.body.lastName,
@@ -94,9 +93,6 @@ router.post('/users',[
       .status(201)
       .location("/")
       .end();
-    } else {
-      res.status(400).json({message: "Email is not Valid"});
-    }
   } catch (error) {
     if (error.name === "SequelizeUniqueConstraintError"){
         user = await User.build({

@@ -100,16 +100,39 @@ class UserSignUp extends Component {
         status: response.status
       })
       ).then(res => {
-          console.log(res.data.errors);
+          console.log(res);
           let errors = res.data.errors;
-          if(this.mounted) {
-            this.setState({
-              formatMessage: errors
-            }) 
-          }
+          errors.forEach((error, index) => {
+            debugger
+            if (error === "Invalid value") {
+              errors.splice(index, 1);
+              errors.push("Sorry that email is not valid")
+              if(this.mounted) {
+                this.setState({
+                  formatMessage: errors
+                }) 
+              }
+            } 
+          })
         });
         return null; 
-    } else if (response.status === 500) {
+    //Email already Exists
+    } 
+    if (response.status === 409) {
+      response.json().then(data => ({
+      data: data,
+      status: response.status
+      }))
+      .then(response => {
+        let errors = response.data.errors;
+        if(this.mounted) {
+          this.setState({
+            formatMessage: errors
+          }) 
+        }
+      })
+    }
+    if (response.status === 500) {
       this.props.history.push('/error')
     }
     else {
@@ -119,8 +142,9 @@ class UserSignUp extends Component {
 
   handleSubmit = async (event) => {
     event.preventDefault();
-    this.setState({formatMessage: null})
-    this.confirm()
+    this.setState({formatMessage: null});
+    this.confirm();
+    this.handleSignUp();
       
     
   }
@@ -133,7 +157,6 @@ class UserSignUp extends Component {
   confirm = () => {
     if (this.state.password === this.state.confirmPassword && this.state.password !== "") {
       this.setState({passwordError: null})
-      this.handleSignUp();
       return null;
     } else {
       console.log("Passwords do not match")
