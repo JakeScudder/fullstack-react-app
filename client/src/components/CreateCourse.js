@@ -29,6 +29,7 @@ class CreateCourse extends Component {
     });
   }
 
+  
   apiFunction(path, method, body = null, requiresAuth = true, credentials = null) {
     const options = {
       method, 
@@ -122,12 +123,16 @@ class CreateCourse extends Component {
           <div className="grid-66">
             <div className="course--header">
               <h4 className="course--label">Course</h4>
-              <div><input id="title" name="title" type="text" className="input-title course--title--input" placeholder="Course title..." onChange={this.handleChange}
-                  value={this.state.title}/></div>
+                <div>
+                  <input id="title" name="title" type="text" className="input-title course--title--input" placeholder="Course title..." onChange={this.handleChange} value={this.state.title}/>
+                </div>
               <p>{name}</p>
             </div>
             <div className="course--description">
-              <div><textarea id="description" name="description" className="" placeholder="Course description..." onChange={this.handleChange} value={this.state.description}></textarea></div>
+              <div>
+                <textarea id="description" name="description" className="" placeholder="Course description..." onChange={this.handleChange} value={this.state.description}>
+                </textarea>
+              </div>
             </div>
           </div>
           <div className="grid-25 grid-right">
@@ -135,17 +140,26 @@ class CreateCourse extends Component {
               <ul className="course--stats--list">
                 <li className="course--stats--list--item">
                   <h4>Estimated Time</h4>
-                  <div><input id="estimatedTime" name="estimatedTime" type="text" className="course--time--input"
-                      placeholder="Hours" onChange={this.handleChange} value={this.state.estimatedTime}/></div>
+                  <div>
+                    <input id="estimatedTime" name="estimatedTime" type="text" className="course--time--input"
+                    placeholder="Hours" onChange={this.handleChange} value={this.state.estimatedTime}/>
+                  </div>
                 </li>
                 <li className="course--stats--list--item">
                   <h4>Materials Needed</h4>
-                  <div><textarea id="materialsNeeded" name="materialsNeeded" className="" placeholder="List materials..." onChange={this.handleChange} value={this.state.materialsNeeded}></textarea></div>
+                  <div>
+                    <textarea id="materialsNeeded" name="materialsNeeded" className="" placeholder="List materials..." onChange={this.handleChange} value={this.state.materialsNeeded}>
+
+                    </textarea>
+                  </div>
                 </li>
               </ul>
             </div>
           </div>
-          <div className="grid-100 pad-bottom"><button className="button" type="submit">Create Course</button><button className="button button-secondary" onClick={this.handleCancel}>Cancel</button></div>
+          <div className="grid-100 pad-bottom">
+            <button className="button" type="submit">Create Course</button>
+            <button className="button button-secondary" onClick={this.handleCancel}>Cancel</button>
+          </div>
         </form>
       </div>
       </div>

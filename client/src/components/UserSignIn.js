@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 
-// import { Redirect } from 'react-router-dom';
-
 class UserSignIn extends Component {
 
   constructor(props) {
@@ -13,7 +11,7 @@ class UserSignIn extends Component {
     };
   }
 
-  //I didn't know how to write my own version of this helper function, but it is pretty much identical to the workshop
+  //Helper function
   apiFunction(path, method = 'GET', body = null, requiresAuth = false, credentials = null ) {
     const options = {
       method, 

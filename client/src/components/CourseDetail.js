@@ -77,16 +77,16 @@ class CourseDetail extends Component {
   }
 
   areYouSure = () => {
-   if (!this.state.showing) {
+    if (!this.state.showing) {
+      this.setState({
+        showing: true
+      })
+    } else {
      this.setState({
-       showing: true
+       showing: false
      })
-   } else {
-    this.setState({
-      showing: false
-    })
+    }
    }
-  }
 
   //Handles Deletion
   handleDeletion = async () => {
